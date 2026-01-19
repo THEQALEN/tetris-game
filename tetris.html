@@ -2,13 +2,14 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tetris - Juego Completo</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
         
         body {
@@ -18,19 +19,24 @@
             min-height: 100vh;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             font-family: 'Arial', sans-serif;
+            overflow: hidden;
         }
         
         #gameContainer {
             display: flex;
-            gap: 30px;
+            gap: 20px;
             background: rgba(255, 255, 255, 0.1);
-            padding: 30px;
+            padding: 20px;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 95vw;
         }
         
         #canvasContainer {
             position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
         
         canvas {
@@ -38,6 +44,7 @@
             border-radius: 10px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             background: #000;
+            display: block;
         }
         
         #gameOver {
@@ -45,7 +52,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.95);
             color: #fff;
             padding: 30px 50px;
             border-radius: 15px;
@@ -83,58 +90,189 @@
         
         #info {
             color: white;
-            min-width: 200px;
+            min-width: 180px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
         
         #info h1 {
-            font-size: 32px;
-            margin-bottom: 30px;
+            font-size: 28px;
             text-align: center;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
         
         .infoBox {
             background: rgba(255, 255, 255, 0.2);
-            padding: 20px;
+            padding: 15px;
             border-radius: 10px;
-            margin-bottom: 20px;
         }
         
         .infoBox h3 {
-            font-size: 16px;
-            margin-bottom: 10px;
+            font-size: 14px;
+            margin-bottom: 8px;
             opacity: 0.8;
         }
         
         .infoBox p {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: bold;
         }
         
         #controls {
             background: rgba(255, 255, 255, 0.2);
-            padding: 20px;
+            padding: 15px;
             border-radius: 10px;
-            font-size: 14px;
-            line-height: 1.8;
+            font-size: 13px;
+            line-height: 1.6;
         }
         
         #controls h3 {
-            margin-bottom: 15px;
-            font-size: 18px;
+            margin-bottom: 10px;
+            font-size: 16px;
         }
         
         #controls div {
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
         
         .key {
             display: inline-block;
             background: rgba(255, 255, 255, 0.3);
-            padding: 4px 10px;
+            padding: 3px 8px;
             border-radius: 5px;
             font-weight: bold;
-            margin-right: 8px;
+            margin-right: 6px;
+        }
+        
+        /* CONTROLES TÁCTILES PARA MÓVIL */
+        #touchControls {
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 10px;
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .touchButton {
+            background: rgba(255, 255, 255, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.1s;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 60px;
+        }
+        
+        .touchButton:active {
+            background: rgba(255, 255, 255, 0.5);
+            transform: scale(0.95);
+        }
+        
+        .touchButton.rotate {
+            grid-column: 2;
+        }
+        
+        .touchButton.left {
+            grid-column: 1;
+            grid-row: 2;
+        }
+        
+        .touchButton.down {
+            grid-column: 2;
+            grid-row: 2;
+        }
+        
+        .touchButton.right {
+            grid-column: 3;
+            grid-row: 2;
+        }
+        
+        /* RESPONSIVE PARA MÓVIL */
+        @media (max-width: 768px) {
+            body {
+                align-items: flex-start;
+                padding-top: 10px;
+            }
+            
+            #gameContainer {
+                flex-direction: column;
+                padding: 15px;
+                gap: 15px;
+                width: 100%;
+            }
+            
+            canvas {
+                width: 100% !important;
+                height: auto !important;
+                max-width: 300px;
+                margin: 0 auto;
+            }
+            
+            #info {
+                min-width: 100%;
+            }
+            
+            #info h1 {
+                font-size: 24px;
+            }
+            
+            .infoBox {
+                padding: 12px;
+            }
+            
+            .infoBox h3 {
+                font-size: 12px;
+            }
+            
+            .infoBox p {
+                font-size: 20px;
+            }
+            
+            #controls {
+                display: none;
+            }
+            
+            #touchControls {
+                display: grid;
+            }
+            
+            #gameOver {
+                padding: 20px 30px;
+                max-width: 90%;
+            }
+            
+            #gameOver h2 {
+                font-size: 28px;
+            }
+            
+            #gameOver p {
+                font-size: 16px;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            #info h1 {
+                font-size: 20px;
+            }
+            
+            .infoBox p {
+                font-size: 18px;
+            }
+            
+            .touchButton {
+                font-size: 20px;
+                padding: 15px;
+                min-height: 50px;
+            }
         }
     </style>
 </head>
@@ -142,6 +280,15 @@
     <div id="gameContainer">
         <div id="canvasContainer">
             <canvas id="tetris" width="300" height="600"></canvas>
+            
+            <!-- Controles táctiles para móvil -->
+            <div id="touchControls">
+                <button class="touchButton rotate" data-action="rotate">↻</button>
+                <button class="touchButton left" data-action="left">←</button>
+                <button class="touchButton down" data-action="down">↓</button>
+                <button class="touchButton right" data-action="right">→</button>
+            </div>
+            
             <div id="gameOver">
                 <h2>GAME OVER</h2>
                 <p>Puntuación: <span id="finalScore">0</span></p>
@@ -182,14 +329,8 @@
         /*
          * ==========================================
          * TETRIS - JUEGO COMPLETO Y FUNCIONAL
+         * CON SOPORTE PARA MÓVIL Y TÁCTIL
          * ==========================================
-         * 
-         * ARQUITECTURA DEL JUEGO:
-         * 1. Tablero: matriz 10x20 que guarda el estado de cada celda
-         * 2. Piezas: 7 tetrominos oficiales con sus rotaciones
-         * 3. Motor: control de caída, colisiones, rotación y líneas
-         * 4. Renderizado: dibuja el tablero y la pieza actual en canvas
-         * 5. Input: manejo de teclado para controlar el juego
          */
 
         // ==========================================
@@ -217,9 +358,6 @@
         // ==========================================
         // DEFINICIÓN DE PIEZAS (TETROMINOS)
         // ==========================================
-        
-        // Cada pieza tiene 4 rotaciones posibles
-        // Representadas como matrices donde 1 = bloque, 0 = vacío
         
         const PIECES = {
             'I': [
@@ -352,7 +490,7 @@
         let level = 1;
         let gameRunning = false;
         let dropCounter = 0;
-        let dropInterval = 1000; // milisegundos entre caídas
+        let dropInterval = 1000;
         let lastTime = 0;
         
         // ==========================================
@@ -381,7 +519,6 @@
             currentX = Math.floor(COLS / 2) - 2;
             currentY = 0;
             
-            // Verificar si hay espacio para la nueva pieza (Game Over)
             if (collision(currentX, currentY, currentRotation)) {
                 gameOver();
             }
@@ -400,12 +537,10 @@
                         const newX = x + col;
                         const newY = y + row;
                         
-                        // Verificar límites del tablero
                         if (newX < 0 || newX >= COLS || newY >= ROWS) {
                             return true;
                         }
                         
-                        // Verificar colisión con piezas existentes
                         if (newY >= 0 && board[newY][newX]) {
                             return true;
                         }
@@ -436,10 +571,7 @@
                 }
             }
             
-            // Verificar y eliminar líneas completas
             clearLines();
-            
-            // Crear nueva pieza
             createPiece();
         }
         
@@ -450,34 +582,21 @@
         function clearLines() {
             let linesCleared = 0;
             
-            // Recorrer el tablero de abajo hacia arriba
             for (let row = ROWS - 1; row >= 0; row--) {
                 if (board[row].every(cell => cell !== 0)) {
-                    // Eliminar la línea
                     board.splice(row, 1);
-                    // Agregar nueva línea vacía arriba
                     board.unshift(Array(COLS).fill(0));
                     linesCleared++;
-                    row++; // Revisar la misma fila de nuevo
+                    row++;
                 }
             }
             
-            // Actualizar puntuación
             if (linesCleared > 0) {
                 lines += linesCleared;
-                
-                // Sistema de puntuación:
-                // 1 línea = 100 puntos
-                // 2 líneas = 300 puntos
-                // 3 líneas = 500 puntos
-                // 4 líneas = 800 puntos (Tetris!)
                 const points = [0, 100, 300, 500, 800];
                 score += points[linesCleared] * level;
-                
-                // Aumentar nivel cada 10 líneas
                 level = Math.floor(lines / 10) + 1;
                 dropInterval = Math.max(100, 1000 - (level - 1) * 100);
-                
                 updateScore();
             }
         }
@@ -511,7 +630,7 @@
         
         function hardDrop() {
             while (moveDown()) {
-                score += 2; // Bonus por caída rápida
+                score += 2;
             }
             updateScore();
         }
@@ -526,13 +645,10 @@
             if (!collision(currentX, currentY, nextRotation)) {
                 currentRotation = nextRotation;
             } else {
-                // Wall kick: intentar ajustar posición para rotar
-                // Intentar mover a la izquierda
                 if (!collision(currentX - 1, currentY, nextRotation)) {
                     currentX--;
                     currentRotation = nextRotation;
                 }
-                // Intentar mover a la derecha
                 else if (!collision(currentX + 1, currentY, nextRotation)) {
                     currentX++;
                     currentRotation = nextRotation;
@@ -548,22 +664,18 @@
             ctx.fillStyle = color;
             ctx.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
             
-            // Borde del bloque
             ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
             ctx.lineWidth = 2;
             ctx.strokeRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
             
-            // Efecto de brillo
             ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
             ctx.fillRect(x * BLOCK_SIZE + 2, y * BLOCK_SIZE + 2, BLOCK_SIZE - 4, BLOCK_SIZE / 3);
         }
         
         function draw() {
-            // Limpiar canvas
             ctx.fillStyle = '#000';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Dibujar tablero
             for (let row = 0; row < ROWS; row++) {
                 for (let col = 0; col < COLS; col++) {
                     if (board[row][col]) {
@@ -572,7 +684,6 @@
                 }
             }
             
-            // Dibujar pieza actual
             if (currentPiece) {
                 const shape = currentPiece.shape[currentRotation];
                 
@@ -640,7 +751,7 @@
                     break;
                 case 'ArrowDown':
                     moveDown();
-                    score += 1; // Bonus pequeño por bajar manualmente
+                    score += 1;
                     updateScore();
                     break;
                 case 'ArrowUp':
@@ -656,6 +767,67 @@
         });
         
         // ==========================================
+        // CONTROLES TÁCTILES PARA MÓVIL
+        // ==========================================
+        
+        const touchButtons = document.querySelectorAll('.touchButton');
+        
+        touchButtons.forEach(button => {
+            button.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                if (!gameRunning) return;
+                
+                const action = button.dataset.action;
+                
+                switch(action) {
+                    case 'left':
+                        moveLeft();
+                        break;
+                    case 'right':
+                        moveRight();
+                        break;
+                    case 'down':
+                        moveDown();
+                        score += 1;
+                        updateScore();
+                        break;
+                    case 'rotate':
+                        rotate();
+                        break;
+                }
+                
+                draw();
+            });
+            
+            // También soporte para click (testing en desktop)
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (!gameRunning) return;
+                
+                const action = button.dataset.action;
+                
+                switch(action) {
+                    case 'left':
+                        moveLeft();
+                        break;
+                    case 'right':
+                        moveRight();
+                        break;
+                    case 'down':
+                        moveDown();
+                        score += 1;
+                        updateScore();
+                        break;
+                    case 'rotate':
+                        rotate();
+                        break;
+                }
+                
+                draw();
+            });
+        });
+        
+        // ==========================================
         // BUCLE PRINCIPAL DEL JUEGO
         // ==========================================
         
@@ -667,7 +839,6 @@
             
             dropCounter += deltaTime;
             
-            // Caída automática de la pieza
             if (dropCounter > dropInterval) {
                 moveDown();
                 dropCounter = 0;
